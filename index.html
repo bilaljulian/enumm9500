@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Ad</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .tptp_cvr {
+            width: 100%;
+            height: 42px;
+            background-color: blue;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #0056b3;
+            border-radius: 5px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .post-ad-button, .post-ad-live-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            background-color: red;
+            margin-right: 10px;
+        }
+
+        .post-ad-button:hover, .post-ad-live-button:hover {
+            background-color: darkred;
+        }
+
+        .search-bar {
+            width: 313.6px;
+            height: 26.6px;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+            margin-left: 20px;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            background-color: red;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+        }
+
+        .search-button:hover {
+            background-color: darkred;
+        }
+
+        .sidebars-container {
+            position: fixed;
+            top: 42px;
+            left: 0;
+            width: 200px;
+            height: calc(100vh - 42px);
+            overflow-y: auto;
+            box-sizing: border-box;
+            z-index: 500;
+        }
+
+        .sidebar, .popular-searches-sidebar, .price-range-sidebar, .additional-sidebar {
+            background-color: #f4f4f4;
+            border-bottom: 1px solid #ddd;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .sidebar {
+            height: 2781.2px;
+        }
+
+        .popular-searches-sidebar {
+            background-color: #e4e4e4;
+            height: 642px;
+        }
+
+        .price-range-sidebar {
+            background-color: #d4d4d4;
+            height: 185.8px;
+        }
+
+        .additional-sidebar {
+            background-color: #c4c4c4;
+            height: 185.8px;
+        }
+
+        .main-content {
+            margin-left: 200px;
+            padding: 20px;
+            margin-top: 42px;
+        }
+
+        .listings-container {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .listing {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+
+        .search-link {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px;
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .search-link:hover {
+            background-color: #e0e0e0;
+        }
+
+        .content-display {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            z-index: 1000;
+            width: 300px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-active {
+            display: block;
+        }
+
+        .modal-header {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .modal-body input, .modal-body textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .modal-body textarea {
+            resize: vertical;
+        }
+
+        .modal-footer {
+            text-align: right;
+        }
+
+        .modal-footer button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: red;
+            color: white;
+        }
+
+        .modal-footer button:hover {
+            background-color: darkred;
+        }
+
+        .modal-close {
+            cursor: pointer;
+            color: #999;
+            float: right;
+            font-size: 20px;
+            margin-left: 10px;
+        }
+
+        .modal-close:hover {
+            color: black;
+        }
+
+        .ad {
+            width: 100%;
+            max-width: 728px;
+            height: auto;
+            display: flex;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+
+        .ad-image-container {
+            width: 150px;
+            height: 110px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+
+        .ad-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ad-details {
+            flex: 1;
+            padding: 10px;
+            width: calc(100% - 160px);
+        }
+
+        .ad-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .ad-description {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .ad-price {
+            font-size: 16px;
+            color: green;
+            margin-top: 10px;
+        }
+
+        .preview-image {
+            display: inline-block;
+            margin: 5px;
+            border: 1px solid #ddd;
+            width: 150px;
+            height: 110px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- Blue bar -->
+    <div class="tptp_cvr">
+        <a href="https://enull500.vercel.app/#" class="post-ad-button">Post an Ad</a>
+        <button class="post-ad-live-button" id="postAdLiveButton">Post Ad Live</button>
+        <input type="text" id="searchInput" class="search-bar" placeholder="Search...">
+    </div>
+
+    <!-- Sidebars Container -->
+    <div class="sidebars-container">
+        <div class="sidebar" id="sidebar">
+            <h2>Search History</h2>
+            <div id="searchHistory"></div>
+        </div>
+
+        <div class="popular-searches-sidebar" id="popularSearchesSidebar">
+            <h2>Popular Searches</h2>
+            <div id="popularSearches"></div>
+        </div>
+
+        <div class="price-range-sidebar" id="priceRangeSidebar">
+            <h2>Price Range</h2>
+            <label for="minPrice">Min Price:</label>
+            <input type="number" id="minPrice" placeholder="0" style="width: 100%;"><br><br>
+            <label for="maxPrice">Max Price:</label>
+            <input type="number" id="maxPrice" placeholder="1000" style="width: 100%;">
+        </div>
+
+        <div class="additional-sidebar" id="additionalSidebar">
+            <h2>Additional Options</h2>
+            <button class="search-button" id="searchButton">Search</button>
+        </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+        <div class="content-display" id="contentDisplay"></div>
+        <div id="adContainer" class="ad-container"></div>
+    </div>
+
+    <!-- Modal for Post Ad Live -->
+    <div class="modal" id="postAdModal">
+        <div class="modal-header">
+            <span class="modal-close" id="modalClose">&times;</span>
+            <h2>Post Ad</h2>
+        </div>
+        <div class="modal-body">
+            <input type="text" id="adTitle" placeholder="Ad Title" required>
+            <textarea id="adDescription" rows="4" placeholder="Ad Description" required></textarea>
+            <input type="number" id="adPrice" placeholder="Price" required>
+            <input type="text" id="adURL" placeholder="Website URL">
+            <input type="file" id="adImage" accept="image/*">
+            <div id="imagePreview"></div>
+        </div>
+        <div class="modal-footer">
+            <button id="postAdButton">Post Ad</button>
+        </div>
+    </div>
+
+    <script>
+        // Handle modal display
+        const postAdLiveButton = document.getElementById('postAdLiveButton');
+        const postAdModal = document.getElementById('postAdModal');
+        const modalClose = document.getElementById('modalClose');
+        const postAdButton = document.getElementById('postAdButton');
+
+        postAdLiveButton.onclick = () => postAdModal.classList.add('modal-active');
+        modalClose.onclick = () => postAdModal.classList.remove('modal-active');
+        postAdButton.onclick = postAd;
+
+        // Handle file preview
+        const adImage = document.getElementById('adImage');
+        const imagePreview = document.getElementById('imagePreview');
+
+        adImage.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="Image Preview">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Save and display ads
+        function postAd() {
+            const title = document.getElementById('adTitle').value;
+            const description = document.getElementById('adDescription').value;
+            const price = document.getElementById('adPrice').value;
+            const url = document.getElementById('adURL').value;
+            const image = adImage.files[0];
+
+            if (!title || !description || !price) {
+                alert("Please fill in all required fields.");
+                return;
+            }
+
+            const imageUrl = image ? URL.createObjectURL(image) : '';
+
+            let ads = JSON.parse(localStorage.getItem('ads')) || [];
+            ads.push({ title, description, price, url, image: imageUrl });
+            localStorage.setItem('ads', JSON.stringify(ads));
+            displayAds();
+            postAdModal.classList.remove('modal-active');
+        }
+
+        // Display ads
+        function displayAds() {
+            const adContainer = document.getElementById('adContainer');
+            const ads = JSON.parse(localStorage.getItem('ads')) || [];
+            adContainer.innerHTML = ads.map(ad => `
+                <div class="ad">
+                    <div class="ad-image-container">
+                        <img src="${ad.image}" class="ad-image" alt="${ad.title}">
+                    </div>
+                    <div class="ad-details">
+                        <div class="ad-title">${ad.title}</div>
+                        <div class="ad-description">${ad.description}</div>
+                        <div class="ad-price">$${ad.price}</div>
+                        <a href="${ad.url}" target="_blank">View more</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initial load
+        displayAds();
+
+        // Handle search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchHistory = document.getElementById('searchHistory');
+        const popularSearches = document.getElementById('popularSearches');
+        const searchButton = document.getElementById('searchButton');
+
+        searchButton.onclick = () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+                if (!history.includes(query)) {
+                    history.push(query);
+                    localStorage.setItem('searchHistory', JSON.stringify(history));
+                    displaySearchHistory();
+                }
+                // Add search functionality here
+            }
+        };
+
+        function displaySearchHistory() {
+            const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            searchHistory.innerHTML = history.map(term => `<div class="search-link">${term}</div>`).join('');
+        }
+
+        function displayPopularSearches() {
+            // Dummy popular searches, you can replace with dynamic content
+            const popular = ['Rare Coins', 'Vintage Toys', 'Antique Furniture'];
+            popularSearches.innerHTML = popular.map(term => `<div class="search-link">${term}</div>`).join('');
+        }
+
+        displaySearchHistory();
+        displayPopularSearches();
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eNull - Rare Items Marketplace</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            min-height: 100vh; /* Ensures the body takes up at least the full height of the viewport */
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex: 1; /* Allows the content to grow and take up available space */
+            width: 80%;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        footer {
+            background-color: blue; /* Blue background for footer */
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            width: 60%; /* Set the width of the footer */
+            margin: 0 auto; /* Center the footer */
+            position: relative; /* Relative positioning for footer */
+            bottom: 0;
+            left: 0;
+        }
+        footer ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        footer li {
+            margin: 5px 10px;
+        }
+        footer a {
+            color: white;
+            text-decoration: none;
+        }
+        .footer-text {
+            font-size: 14px;
+        }
+        .trademark {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <!-- Main content goes here -->
+    </div>
+    <footer>
+        <ul>
+            <li><a href="https://enull1000.vercel.app/">About eNull</a></li>
+            <li><a href="https://enull1000.vercel.app/">Contact eNull</a></li>
+            <li><a href="https://enull1000.vercel.app/">Help</a></li>
+            <li><a href="https://enull1000.vercel.app/">Safety Center</a></li>
+            <li><a href="https://enull1000.vercel.app/">Safety Guidelines</a></li>
+            <li><a href="https://enull1000.vercel.app/">Common Scams</a></li>
+            <li><a href="https://enull1000.vercel.app/">Do Not Sell My Information</a></li>
+            <li><a href="https://enull1000.vercel.app/">Cookie Policy</a></li>
+            <li><a href="https://enull1000.vercel.app/">Terms of Use</a></li>
+            <li><a href="https://enull1000.vercel.app/">Fundraising</a></li>
+            <li><a href="https://enull1000.vercel.app/">Advertising</a></li>
+            <li><a href="https://enull1300.vercel.app/">1</a></li>
+            <li><a href="https://enull1400.vercel.app/">2</a></li>
+            <li><a href="https://enull1500.vercel.app/">3</a></li>
+            <li><a href="https://enull1600.vercel.app/">4</a></li>
+            <li><a href="https://vercel.com/bilals-projects-a9be4963/enull1700">5</a></li>
+            <li><a href="https://enull1800.vercel.app/">6</a></li>
+            <li><a href="https://enull1900.vercel.app/">7</a></li>
+            <li><a href="https://enull2000.vercel.app/">8</a></li>
+            <li><a href="https://enill2100.vercel.app/">9</a></li>
+            <li><a href="https://enull2200.vercel.app/">10</a></li>
+            <li><a href="https://enull2300.vercel.app/">11</a></li>
+            <li><a href="https://enull2400.vercel.app/">12</a></li>
+            <li><a href="https://enull2800.vercel.app/">Login</a></li>
+        </ul>
+        <div class="footer-text">
+            &copy; <span id="year"></span> eNull. All rights reserved. Copyrighted.
+        </div>
+        <div class="trademark">
+            eNull™ is a trademark of eNull Inc. All other trademarks and brands are property of their respective owners.
+        </div>
+    </footer>
+
+    <script>
+        // Update the copyright year automatically
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
